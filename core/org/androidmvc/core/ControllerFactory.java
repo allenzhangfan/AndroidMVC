@@ -2,19 +2,19 @@ package org.androidmvc.core;
 
 import android.content.Context;
 
-public class SrvcFactory {
+public class ControllerFactory {
 	/**
 	 * 单例的实现
 	 */
-	public static SrvcFactory singleton = null;
+	public static ControllerFactory singleton = null;
 
-	private SrvcFactory(Context context) {
+	private ControllerFactory(Context context) {
 		this.context = context;
 	}
 
-	public static synchronized SrvcFactory getInstance(Context context) {
+	public static synchronized ControllerFactory getInstance(Context context) {
 		if (singleton == null) {
-			singleton = new SrvcFactory(context);
+			singleton = new ControllerFactory(context);
 		}
 		return singleton;
 	}

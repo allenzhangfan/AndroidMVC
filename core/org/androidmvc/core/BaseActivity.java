@@ -20,10 +20,11 @@ import android.widget.TextView;
 
 public abstract class BaseActivity extends FinalActivity implements IHasTitleBar {
 	private static final String TAG = "activityInfo";
-	protected SrvcFactory srvcFactory = SrvcFactory.getInstance(this);
+	protected ControllerFactory srvcFactory = ControllerFactory.getInstance(this);
 	protected App app=App.getInstance();
 	private long waitTime = 8000;
 	private long touchTime = 0;
+	
 	
 	/**
 	 * 该页面的状态，是新增、编辑或显示

@@ -239,29 +239,9 @@ public class FinalDb {
 	}
 
 	/**
-	 * 保存实体到数据库,并返回int型主键的值
-	 * <p>
-	 * @author zhangfan 2013-12-18
-	 * @param entity
-	 * @return 该实体主键的值
-	 */
-	public int saveReturnIntPK(Object entity) {
-		checkTableExist(entity.getClass());
-		exeSqlInfo(SqlBuilder.buildInsertSql(entity));
-		int intPK;
-		try {
-			intPK = Integer.parseInt(getMaxId(entity).toString());
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			return 0;
-		}
-		return intPK;
-		
-	}
-	
-	/**
 	 * 保存实体到数据库
 	 * <p>
+	 * 
 	 * @author zhangfan 2013-12-18
 	 * @param entity
 	 * @return 该实体主键的值
@@ -328,40 +308,43 @@ public class FinalDb {
 	/**
 	 * 更新数据，如果id为空则新增,并返回int型主键的值
 	 * <p>
+	 * 
 	 * @author zhangfan 2013-12-18
 	 * @param entity
 	 * @return 该实体的主键值
 	 */
-	public Object saveOrUpdateReturnIntPK(Object entity) {
+	public int saveOrUpdateReturnIntPK(Object entity) {
 		checkTableExist(entity.getClass());
 		exeSqlInfo(SqlBuilder.getSaveOrUpdateSqlAsSqlInfo(entity));
-		Object idValue=getId(entity);
-		boolean isNull=false;
-		if(idValue==null){
-			isNull=true;
+		Object idValue = getId(entity);
+		boolean isNull = false;
+		if (idValue == null) {
+			isNull = true;
 		}
-		if(idValue.getClass()==Integer.class||idValue.getClass()==int.class){
-			int iIdValue=(Integer) idValue;
-			if(iIdValue==0){
-				isNull=true;
+		if (idValue.getClass() == Integer.class
+				|| idValue.getClass() == int.class) {
+			int iIdValue = (Integer) idValue;
+			if (iIdValue == 0) {
+				isNull = true;
 			}
 		}
-		if(idValue.getClass()==String.class){
-			String sIdValue=(String) idValue;
-			if("".equals(sIdValue)){
-				isNull=true;
+		if (idValue.getClass() == String.class) {
+			String sIdValue = (String) idValue;
+			if ("".equals(sIdValue)) {
+				isNull = true;
 			}
 		}
-		if(isNull){
-			return getMaxId(entity);
-		}else{
-			return idValue;
+		if (isNull) {
+			return Integer.parseInt(getMaxId(entity).toString());
+		} else {
+			return Integer.parseInt(idValue.toString());
 		}
 	}
-	
+
 	/**
 	 * 更新数据，如果id为空则新增
 	 * <p>
+	 * 
 	 * @author zhangfan 2013-12-18
 	 * @param entity
 	 * @return 该实体的主键值
@@ -374,6 +357,7 @@ public class FinalDb {
 	/**
 	 * 更新数据，如果id为空则新增,并返回String类型的UUID值的主键的值
 	 * <p>
+	 * 
 	 * @author zhangfan 2013-12-18
 	 * @param entity
 	 * @return 该实体的主键值
@@ -383,50 +367,26 @@ public class FinalDb {
 		TableInfo table = TableInfo.get(entity.getClass());
 		String idValue = table.getId().getValue(entity);
 		String uuid;
-		if(table.getId().getField().getType()==String.class){
-			if(TextUtils.isEmpty(idValue)){
-				uuid=UUID.randomUUID().toString();
+		if (table.getId().getField().getType() == String.class) {
+			if (TextUtils.isEmpty(idValue)) {
+				uuid = UUID.randomUUID().toString();
 				table.getId().setValue(entity, uuid);
 				this.save(entity);
-			}else{
-				uuid=idValue;
+			} else {
+				uuid = idValue;
 				this.update(entity);
 			}
-		}else{
-			uuid=null;
+		} else {
+			uuid = null;
 		}
-		
 		return uuid;
 	}
-	
-	/**
-	 * 更新数据，如果id为空则新增,并返回String类型主键的值
-	 * <p>
-	 * @author zhangfan 2013-12-18
-	 * @param entity
-	 * @return 该实体的主键值
-	 */
-	public String saveOrUpdateReturnStringPK(Object entity) {
-		checkTableExist(entity.getClass());
-		TableInfo table = TableInfo.get(entity.getClass());
-		String idValue = table.getId().getValue(entity);
-		if(idValue!=null){
-			Object obj=this.findById(idValue, entity.getClass());
-			if(obj==null){
-				this.save(entity);
-			}else{
-				this.update(entity);
-			}
-			return idValue;
-		}else{
-			return null;
-		}
-		
-	}
+
 	private Object getId(Object entity) {
 		TableInfo table = TableInfo.get(entity.getClass());
 		return table.getId().getValue(entity);
 	}
+
 	private Object getMaxId(Object entity) {
 		DbModel dbModel = this.findDbModelBySQL(SqlBuilder
 				.getSelectMaxIdSqlInfo(entity.getClass()).getSql());
@@ -529,15 +489,16 @@ public class FinalDb {
 		}
 	}
 
-	public void execSql(String sql){
+	public void execSql(String sql) {
 		debugSql(sql);
 		db.execSQL(sql);
 	}
-	public void execSql(String sql,Object[] bindArgs){
+
+	public void execSql(String sql, Object[] bindArgs) {
 		debugSql(sql);
 		db.execSQL(sql, bindArgs);
 	}
-	
+
 	private void exeSqlInfo(SqlInfo sqlInfo) {
 		if (sqlInfo != null) {
 			debugSql(sqlInfo.getSql());
@@ -546,8 +507,6 @@ public class FinalDb {
 			Log.e(TAG, "save error:sqlInfo is null");
 		}
 	}
-	
-	
 
 	/**
 	 * 根据主键查找数据（默认不查询多对一或者一对多的关联数据）
@@ -895,15 +854,17 @@ public class FinalDb {
 			db.execSQL(sql);
 		}
 	}
+
 	/**
 	 * 得到创建表的SQL
 	 * <p>
+	 * 
 	 * @author zhangfan 2014-1-16
 	 * @param clazz
 	 * @return
 	 */
-	public String getCreateTableSql(Class<?> clazz){
-		return  SqlBuilder.getCreatTableSQL(clazz);
+	public String getCreateTableSql(Class<?> clazz) {
+		return SqlBuilder.getCreatTableSQL(clazz);
 	}
 
 	private boolean tableIsExist(TableInfo table) {

@@ -303,6 +303,7 @@ public class SqlBuilder {
 		if (null == idvalue||0==Integer.parseInt(idvalue.toString())) {// 主键值为空或者0的时候，则插入新数据
 			return buildInsertSql(entity);
 		}else{
+			//TODO 对非自增的int主键更新和插入的处理
 			List<KeyValue> keyValueList = new ArrayList<KeyValue>();
 			// 添加属性
 			Collection<Property> propertys = table.propertyMap.values();

@@ -10,14 +10,14 @@ import android.app.Application;
 public class App extends Application {
 
 	private static App instance = null;
-	public SrvcFactory srvcFactory;
+	public ControllerFactory srvcFactory;
 	
 	public AppManager manager=AppManager.getAppManager();
 
 	@Override
 	public void onCreate() {
 		instance = this;
-		srvcFactory=SrvcFactory.getInstance(this);
+		srvcFactory=ControllerFactory.getInstance(this);
 //		if(this.user==null){
 //			user=srvcFactory.getUserSrvc().getSQLITEUser();
 //		}
@@ -41,11 +41,11 @@ public class App extends Application {
 //	}
 
 
-	public SrvcFactory getSrvcFactory() {
+	public ControllerFactory getSrvcFactory() {
 		return srvcFactory;
 	}
 
-	public void setSrvcFactory(SrvcFactory srvcFactory) {
+	public void setSrvcFactory(ControllerFactory srvcFactory) {
 		this.srvcFactory = srvcFactory;
 	}
 
